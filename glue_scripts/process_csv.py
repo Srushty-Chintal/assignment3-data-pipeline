@@ -5,6 +5,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 
+raise Exception("Intentional Glue failure test")
 
 args = getResolvedOptions(
     sys.argv,
@@ -23,6 +24,7 @@ input_file = (
 
 output_path = (
     f"s3://{args['OUTPUT_BUCKET']}/csv/"
+    f"{args['OBJECT_KEY'].replace('/', '_')}/"
 )
 
 country_mapping = {
