@@ -23,6 +23,8 @@ input_file = (
 
 output_path = (
     f"s3://{args['OUTPUT_BUCKET']}/json/"
+    f"{args['OBJECT_KEY'].replace('/', '_')}/"
+    
 )
 
 country_mapping = {

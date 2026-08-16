@@ -64,6 +64,11 @@ class DeploymentManager:
             region_name=self.region
         )
 
+        self.dynamodb_client = boto3.client(
+            "dynamodb",
+            region_name=self.region
+        )
+
         self.account_id = self.sts_client.get_caller_identity()[
             "Account"
         ]
@@ -82,6 +87,8 @@ class DeploymentManager:
             "glue_success": "GlueSuccessLambdaKey",
             "glue_failure": "GlueFailureLambdaKey"
         }
+
+        
 
         self.uploaded_lambda_keys = {}
 
@@ -465,10 +472,39 @@ class DeploymentManager:
         self.package_and_upload_lambdas()
         self.upload_glue_scripts()
         self.deploy_cloudformation()
+
+        
+
+        
+
         self.show_stack_outputs()
 
         print("\nDeployment completed successfully.")
 
+        
+    
+
+        
+    def get_stack_output(self, output_key):
+
+        response = self.cloudformation_client.describe_stacks(
+            StackName=self.stack_name
+        )
+
+        outputs = response["Stacks"][0].get(
+            "Outputs",
+            []
+        )
+
+        for output in outputs:
+            if output["OutputKey"] == output_key:
+                return output["OutputValue"]
+
+        raise ValueError(
+            f"CloudFormation output not found: {output_key}"
+        )
+
+    
 
 if __name__ == "__main__":
 

@@ -5,7 +5,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 
-raise Exception("Intentional Glue failure test")
+#for testing failure lambda
+#raise Exception("Intentional Glue failure test")
 
 args = getResolvedOptions(
     sys.argv,

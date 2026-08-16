@@ -261,10 +261,17 @@ Resources:
               - Effect: Allow
                 Action:
                   - dynamodb:GetItem
-                  - dynamodb:UpdateItem
+                  
                 Resource:
                   - !GetAtt S3FileConfigTable.Arn
-
+              
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                Resource:
+                  - !Sub "${SourceBucket.Arn}/*"
+              
               - Effect: Allow
                 Action:
                   - glue:StartJobRun
@@ -294,7 +301,7 @@ Resources:
         Variables:
           TABLE_NAME: !Ref S3FileConfigTable
           CRAWLER_BUCKET: !Ref CrawlerBucket  
-          ENABLE_GLUE_EXECUTION: "false"
+          ENABLE_GLUE_EXECUTION: "true"
   RunGlueJobPermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -367,7 +374,7 @@ Resources:
       WorkerType: G.1X
       NumberOfWorkers: 2
       Timeout: 10
-      MaxRetries: 0
+      MaxRetries: 2
       Command:
         Name: glueetl
         PythonVersion: "3"
@@ -393,6 +400,7 @@ Resources:
       DefaultArguments:
         "--job-language": python
         "--enable-metrics": "true"
+        "--enable-continuous-cloudwatch-log": "true"
 
   TextLargeGlueJob:
     Type: AWS::Glue::Job
@@ -558,6 +566,7 @@ Resources:
                   - glue:UpdateTable
                   - glue:GetDatabase
                   - glue:GetTables
+                  - glue:GetTable
                 Resource: "*"
  
   TextFilesCrawler:
@@ -624,9 +633,13 @@ Resources:
                 Action:
                   - glue:GetCrawler
                   - glue:StartCrawler
+                  - glue:GetDatabases
                   - glue:GetDatabase
                   - glue:GetTable
                   - glue:GetTables
+                  - glue:CreateTable
+                  - glue:UpdateTable
+                  - glue:DeleteTable
                 Resource: "*"
 
               - Effect: Allow
@@ -832,7 +845,7 @@ Outputs:
     Value: !Ref OutputAlertSNSTopic
 
   DynamoDBTableName:
-    Description: DynamoDB table for file configuration
+    Description: DynamoDB table for S3 object configuration
     Value: !Ref S3FileConfigTable
 
   GlueDatabaseName:

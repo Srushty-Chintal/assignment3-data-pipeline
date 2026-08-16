@@ -16,15 +16,15 @@ def lambda_handler(event, context):
 
     if job_name.startswith("Text"):
         crawler_name = "TextFilesCrawler"
-        table_name = "text_files"
+        table_name = "text"
 
     elif job_name.startswith("CSV"):
         crawler_name = "CSVFilesCrawler"
-        table_name = "csv_files"
+        table_name = "csv"
 
     elif job_name.startswith("JSON"):
         crawler_name = "JSONFilesCrawler"
-        table_name = "json_files"
+        table_name = "json"
 
     else:
         raise Exception(
