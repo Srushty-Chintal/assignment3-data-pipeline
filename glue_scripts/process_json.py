@@ -48,7 +48,10 @@ country_udf = udf(
     StringType()
 )
 
-dataframe = spark.read.json(
+dataframe = spark.read.option(
+    "multiLine",
+    "true"
+).json(
     input_file
 )
 
